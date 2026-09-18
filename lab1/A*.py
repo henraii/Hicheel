@@ -47,7 +47,7 @@ def aStar(m):
 
 if __name__=='__main__':
     m=maze(5,5)
-    m.CreateMaze()
+    m.CreateMaze(loopPercent=100)
     path=aStar(m)
 
     a=agent(m,footprints=True)
