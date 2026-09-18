@@ -1,54 +1,39 @@
 from pyamaze import maze, agent, COLOR
-
-
-def DFS(m, start=None):
-    if start is None:
-        start = (m.rows, m.cols)
-
+def DFS(m):
+    start =(m.rows,m.cols)
     explored = [start]
     frontier = [start]
     dfsPath = {}
-
-    while frontier:
-        currCell = frontier.pop()
-
-        if currCell == m._goal:
+    while len(frontier) > 0:
+        currentCell =frontier.pop()
+        if currentCell == (1,1):
             break
-
         for d in 'ESNW':
-            if m.maze_map[currCell][d]:
+            if m.maze_map[currentCell][d] == True:
                 if d == 'E':
-                    childCell = (currCell[0], currCell[1] + 1)
-                elif d == 'W':
-                    childCell = (currCell[0], currCell[1] - 1)
-                elif d == 'N':
-                    childCell = (currCell[0] - 1, currCell[1])
-                elif d == 'S':
-                    childCell = (currCell[0] + 1, currCell[1])
-
+                    childCell = (currentCell[0], currentCell[1]+1)
+                if d == 'W':
+                    childCell = (currentCell[0], currentCell[1]-1)
+                if d == 'N':
+                    childCell = (currentCell[0]-1, currentCell[1])
+                if d == 'S':
+                    childCell = (currentCell[0]+1, currentCell[1])
                 if childCell in explored:
                     continue
-
                 explored.append(childCell)
                 frontier.append(childCell)
-                dfsPath[childCell] = currCell
-
+                dfsPath[childCell] = currentCell
     fwdPath = {}
-    cell = m._goal
+    cell = (1,1)
     while cell != start:
         fwdPath[dfsPath[cell]] = cell
         cell = dfsPath[cell]
-
     return fwdPath
 
+m=maze(20,20)
+m.CreateMaze()
+path = DFS(m)
+a = agent(m, footprints=True)
+m.tracePath({a:path})
 
-if __name__ == '__main__':
-    m = maze(5, 5)
-    m.CreateMaze()
-
-    path = DFS(m)
-
-    a = agent(m, footprints=True, color=COLOR.red)
-    m.tracePath({a: path})
-
-    m.run()
+m.run()
