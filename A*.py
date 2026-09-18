@@ -13,7 +13,7 @@ def aStar(m):
     f_score[start]=h(start,(1,1))
 
     open=PriorityQueue()
-    open.put((h(start,(1,1)),h(start,(1,1)),start))
+    open.put((f_score[start],h(start,(1,1)),start))
     aPath={}
     while not open.empty():
         currCell=open.get()[2]
