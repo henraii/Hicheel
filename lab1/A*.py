@@ -52,6 +52,6 @@ if __name__=='__main__':
 
     a=agent(m,footprints=True)
     m.tracePath({a:path})
-    l=textLabel(m,'A Star Path Length',len(path)+1)
+    l=textLabel(m,'A* path length',len(path)+1)
 
     m.run()
