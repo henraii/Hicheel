@@ -5,3 +5,7 @@ __pycache__/
 .DS_Store
 *.png
 !*/results/*.png
+
+# reports and office lock files stay out of git
+*.docx
+.~lock.*#
