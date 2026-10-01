@@ -19,6 +19,7 @@ WIDTH = COLS * SQUARE_SIZE
 HEIGHT = ROWS * SQUARE_SIZE
 RADIUS = SQUARE_SIZE // 2 - 6
 DEPTH = 4
+COLUMN_ORDER = sorted(range(COLS), key=lambda c: abs(c - COLS // 2))
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('Connect Four')
@@ -48,7 +49,7 @@ def draw_board(color=BLUE):
 
 
 def valid_columns(check_board=board):
-    return [col for col in range(COLS) if check_board[0][col] == 0]
+    return [col for col in COLUMN_ORDER if check_board[0][col] == 0]
 
 
 def drop_piece(check_board, col, player):
@@ -86,7 +87,7 @@ def evaluate(check_board):
     return score
 
 
-def minimax(minimax_board, depth, is_maximizing):
+def minimax(minimax_board, depth, alpha, beta, is_maximizing):
     if check_win(player=2, check_board=minimax_board):
         return 1000000 + depth
     elif check_win(player=1, check_board=minimax_board):
@@ -100,26 +101,32 @@ def minimax(minimax_board, depth, is_maximizing):
         best_score = -float('inf')
         for col in valid_columns(minimax_board):
             row = drop_piece(minimax_board, col, 2)
-            score = minimax(minimax_board, depth - 1, is_maximizing=False)
+            score = minimax(minimax_board, depth - 1, alpha, beta, is_maximizing=False)
             minimax_board[row][col] = 0
             best_score = max(score, best_score)
+            alpha = max(alpha, best_score)
+            if beta <= alpha:
+                break
         return best_score
     else:
         best_score = float('inf')
         for col in valid_columns(minimax_board):
             row = drop_piece(minimax_board, col, 1)
-            score = minimax(minimax_board, depth - 1, is_maximizing=True)
+            score = minimax(minimax_board, depth - 1, alpha, beta, is_maximizing=True)
             minimax_board[row][col] = 0
             best_score = min(score, best_score)
+            beta = min(beta, best_score)
+            if beta <= alpha:
+                break
         return best_score
 
 
 def best_move():
     best_score = -float('inf')
     move = None
-    for col in sorted(valid_columns(), key=lambda c: abs(c - COLS // 2)):
+    for col in valid_columns():
         row = drop_piece(board, col, 2)
-        score = minimax(board, DEPTH - 1, is_maximizing=False)
+        score = minimax(board, DEPTH - 1, best_score, float('inf'), is_maximizing=False)
         board[row][col] = 0
         if score > best_score:
             best_score = score
